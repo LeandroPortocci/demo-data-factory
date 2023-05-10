@@ -17,3 +17,91 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+
+stages:
+  - stage: Dev
+    displayName: Dev
+    jobs:
+      - job: DeployADF
+        displayName: Deploy ADF
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: TerraformInstaller@0
+            inputs:
+              terraformVersion: '1.1.0'
+          - task: TerraformTaskV1@0
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+              backendServiceArm: 'your-arm-service-connection'
+              backendAzureRmResourceGroupName: 'your-backend-rg'
+              backendAzureRmStorageAccountName: 'your-storage-account'
+              backendAzureRmContainerName: 'your-container'
+              backendAzureRmKey: 'your-key'
+          - task: TerraformTaskV1@0
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+              environmentServiceNameAzureRM: 'your-azure-service-connection'
+              environmentServiceNameAzureRm: 'your-azure-service-connection'
+
+  - stage: QA
+      displayName: QA
+      jobs:
+        - job: DeployADF
+          displayName: Deploy ADF
+          pool:
+            vmImage: ubuntu-latest
+          steps:
+          - task: TerraformInstaller@0
+            inputs:
+              terraformVersion: '1.1.0'
+          - task: TerraformTaskV1@0
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+              backendServiceArm: 'your-arm-service-connection'
+              backendAzureRmResourceGroupName: 'your-backend-rg'
+              backendAzureRmStorageAccountName: 'your-storage-account'
+              backendAzureRmContainerName: 'your-container'
+              backendAzureRmKey: 'your-key'
+          - task: TerraformTaskV1@0
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+              environmentServiceNameAzureRM: 'your-azure-service-connection'
+              environmentServiceNameAzureRm: 'your-azure-service-connection'
+
+  - stage: Prod
+      displayName: Prod
+      jobs:
+        - job: DeployADF
+          displayName: Deploy ADF
+          pool:
+            vmImage: ubuntu-latest
+          steps:
+            - task: TerraformInstaller@0
+              inputs:
+                terraformVersion: '1.1.0'
+            - task: TerraformTaskV1@0
+              inputs:
+                provider: 'azurerm'
+                command: 'init'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+                backendServiceArm: 'your-arm-service-connection'
+                backendAzureRmResourceGroupName: 'your-backend-rg'
+                backendAzureRmStorageAccountName: 'your-storage-account'
+                backendAzureRmContainerName: 'your-container'
+                backendAzureRmKey: 'your-key'
+            - task: TerraformTaskV1@0
+              inputs:
+                provider: 'azurerm'
+                command: 'apply'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+                environmentServiceNameAzureRM: 'your-azure-service-connection'
+                environmentServiceNameAzureRm: 'your-azure-service-connection'
